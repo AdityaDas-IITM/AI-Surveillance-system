@@ -18,8 +18,6 @@ if not os.path.exists(UPLOAD_DIRECTORY):
     os.makedirs(UPLOAD_DIRECTORY)
 
 
-# Normally, Dash creates its own Flask server internally. By creating our own,
-# we can create a route for downloading files directly:
 server = Flask(__name__)
 
 
