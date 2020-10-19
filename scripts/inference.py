@@ -26,13 +26,13 @@ def inference(queue1, queue2):
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
     c3d_model = C3D().to(device)
     model = fc().to(device)
-    c3d_model.load_state_dict(torch.load("D:/Hackathons/video surveilance/c3d weights.pickle"))
-    model.load_state_dict(torch.load('D:/Hackathons/video surveilance/model.pth'))
+    c3d_model.load_state_dict(torch.load("../models/c3d weights.pickle"))
+    model.load_state_dict(torch.load('../models/model.pth'))
     c3d_model.eval()
     model.eval()
     
     inp = []
-    cap = cv2.VideoCapture("D:/Hackathons/video surveilance/Burglary Video.mp4")
+    cap = cv2.VideoCapture("../Burglary Video.mp4")
     while(cap.isOpened()):
         ret,frame = cap.read()
         if ret == True:
@@ -56,6 +56,7 @@ def inference(queue1, queue2):
     cap.release()
 
 if __name__ == '__main__':
+    
     queue1 = Queue()
     queue2 = Queue()
     display_p = Process(target=display, args=(queue1,queue2))
@@ -63,3 +64,4 @@ if __name__ == '__main__':
     inference(queue1, queue2)
     display_p.join()
     print('done')
+    
