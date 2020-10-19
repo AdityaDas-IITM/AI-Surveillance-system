@@ -83,7 +83,7 @@ app.layout=layout
 @app.callback([Output('page-content', 'children')],
               [Input('url', 'pathname')])
 def display_page(pathname):
-    print(pathname)
+    #print(pathname)
     if pathname == "/start-feed":
         return [layout_page_1]
     elif pathname == "/recent-feed":
