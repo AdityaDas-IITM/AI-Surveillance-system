@@ -11,9 +11,8 @@ import plotly.graph_objects as go
 
 import flask
 
-app = dash.Dash(__name__)
-
-
+#app = dash.Dash(__name__)
+app=dash.Dash(__name__,external_stylesheets = [dbc.themes.UNITED])
 
 navbar = dbc.NavbarSimple(
            children=[
@@ -40,7 +39,7 @@ layout_page_1 = html.Div([
     html.Br(),
     dcc.Link('Navigate to "/"', href='/'),
     html.Br(),
-    dcc.Link('Navigate to "/recent-feed"', href='/recent-feed'),
+    dcc.Link('Navigate to "/recent-feed"', href='/recent-feed')
 ])
 
 layout_page_2 = html.Div([
@@ -50,7 +49,7 @@ layout_page_2 = html.Div([
     html.Br(),
     dcc.Link('Navigate to "/"', href='/'),
     html.Br(),
-    dcc.Link('Navigate to "/start-feed"', href='/start-feed'),
+    dcc.Link('Navigate to "/start-feed"', href='/start-feed')
 ])
 body = dbc.Container(
     [
@@ -71,32 +70,30 @@ body = dbc.Container(
                 ]
             ),
        ],
-className="mt-4",
+className="mt-4"
 )
 
-
-
+page = html.Div(id = 'page-content')
+url_bar = dcc.Location(id = 'url', refresh = False)
 # "complete" layout
-def homepage():
-    layout=html.Div([navbar,body])
-    return layout
-
+layout=html.Div([url_bar,navbar,page])
+app.layout=layout
 
 # Index callbacks
-@app.callback(Output('page-content', 'children'),
+@app.callback([Output('page-content', 'children')],
               [Input('url', 'pathname')])
 def display_page(pathname):
+    print(pathname)
     if pathname == "/start-feed":
-        return layout_page_1
+        return [layout_page_1]
     elif pathname == "/recent-feed":
-        return layout_page_2
+        return [layout_page_2]
     else:
-        return navbar
-
+        return [body]
 
 # Page 1 callbacks
 
-app=dash.Dash(__name__,external_stylesheets = [dbc.themes.UNITED])
-app.layout=homepage()
+
+
 if __name__ == '__main__':
     app.run_server(debug=True)
