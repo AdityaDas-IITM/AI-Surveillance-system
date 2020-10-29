@@ -19,6 +19,7 @@ from model import C3D, fc
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from notif import send_vid
 
 server = Flask(__name__)
 app=dash.Dash(__name__,external_stylesheets = [dbc.themes.UNITED], suppress_callback_exceptions=True, server=server)
@@ -171,7 +172,6 @@ class VideoCamera(object):
 
 def gen(camera):
     inp = []
-    #pred_temp = []
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
     c3d_model = C3D().to(device)
     model = fc().to(device)
@@ -185,17 +185,20 @@ def gen(camera):
         image = cv2.resize(camera.image, (112,112))
         inp += [image]
         if len(inp) == 16:
-            inp = np.array(inp).transpose(3,0,1,2)
-            inp = torch.Tensor(np.expand_dims(inp, axis=0)).to(device)
-            pred = c3d_model(inp).detach().cpu().numpy()
+            inp1 = np.array(inp).transpose(3,0,1,2)
+            inp1 = torch.Tensor(np.expand_dims(inp1, axis=0)).to(device)
+            pred = c3d_model(inp1).detach().cpu().numpy()
             pred = torch.Tensor(np.reshape(pred/np.linalg.norm(pred), (-1,4096))).to(device)
-            #pred_temp+= [pred]
-            #if len(pred_temp) == 5:
-                #pred = torch.mean(torch.Tensor(pred_temp),axis = 0, keepdims = False)
-                #pred_temp = []
             value = model(pred).detach().cpu().numpy()[0][0]
             print(value)
+            if value > 0.15:
+                save = cv2.VideoWriter(f"D:/Github Repos/AI-Surveillance-system/app_uploaded_files/output.mp4", -1, 20, (512,512))
+                for fr in inp:
+                    save.write(cv2.resize(fr,(512,512)))
+                save.release()
+                send_vid("+919740718396")
             inp = []
+            
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 

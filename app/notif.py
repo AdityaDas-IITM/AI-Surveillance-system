@@ -1,16 +1,14 @@
 from selenium import webdriver
 import time
 
-
-
-def send_vid(url, phone):
+def send_vid(phone):
 
     wapp = "https://web.whatsapp.com"
-    url1 = 'https://web.whatsapp.com/send?phone='+phone+'&text='+'Alert'
+    url = 'https://web.whatsapp.com/send?phone='+phone+'&text='+'Alert'
     driver.get(wapp) 
     # load the person's chat
     driver.get(url)
-    time.sleep(5)
+    time.sleep(0.1)
 
     # send test message Nigal
     driver.find_element_by_xpath("/html/body/div[1]/div/div/div[4]/div/footer/div[1]/div[3]/button").click()
@@ -20,7 +18,7 @@ def send_vid(url, phone):
     driver.find_element_by_css_selector("span[data-icon='clip']").click()
     time.sleep(0.1)
     # add file to send by file path
-    driver.find_element_by_css_selector("input[type='file']").send_keys("C:/Users/nihal/Pictures/Camera Roll/hand_track_output.mp4")
+    driver.find_element_by_css_selector("input[type='file']").send_keys("D:/Github Repos/AI-Surveillance-system/app_uploaded_files/output.mp4")
     time.sleep(0.1)
     # click to send
     driver.find_element_by_xpath("/html/body/div[1]/div/div/div[2]/div[2]/span/div/span/div/div/div[2]/span/div/div").click()
