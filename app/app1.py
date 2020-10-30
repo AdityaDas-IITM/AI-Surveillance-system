@@ -21,10 +21,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 from notif import send_vid
 
+from selenium import webdriver
+import time
+
 server = Flask(__name__)
 app=dash.Dash(__name__,external_stylesheets = [dbc.themes.UNITED], suppress_callback_exceptions=True, server=server)
 
-UPLOAD_DIRECTORY = "D:/Github Repos/AI-Surveillance-system/app_uploaded_files"
+UPLOAD_DIRECTORY = "../app_uploaded_files"
 
 if not os.path.exists(UPLOAD_DIRECTORY):
     os.makedirs(UPLOAD_DIRECTORY)
@@ -171,12 +174,13 @@ class VideoCamera(object):
 
 
 def gen(camera):
+    global queue
     inp = []
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
     c3d_model = C3D().to(device)
     model = fc().to(device)
-    c3d_model.load_state_dict(torch.load("D:/Hackathons/video surveilance/c3d weights.pickle"))
-    model.load_state_dict(torch.load('D:/Github Repos/AI-Surveillance-system/models/model.pth'))
+    c3d_model.load_state_dict(torch.load("../models/c3d weights.pickle"))
+    model.load_state_dict(torch.load('../models/model.pth'))
     c3d_model.eval()
     model.eval()
     while True:
@@ -192,11 +196,8 @@ def gen(camera):
             value = model(pred).detach().cpu().numpy()[0][0]
             print(value)
             if value > 0.15:
-                save = cv2.VideoWriter(f"D:/Github Repos/AI-Surveillance-system/app_uploaded_files/output.mp4", -1, 20, (512,512))
-                for fr in inp:
-                    save.write(cv2.resize(fr,(512,512)))
-                save.release()
-                send_vid("+919740718396")
+                queue.put(inp)
+                #send_vid("+919740718396","../app_uploaded_files/output.mp4")
             inp = []
             
         yield (b'--frame\r\n'
@@ -231,7 +232,25 @@ def display_page(pathname):
     else:
         return [body]
 
+def send_msgs(queue):
+    driver = webdriver.Chrome(executable_path='../scripts/chromedriver.exe')
+    wapp = "https://web.whatsapp.com"
+    driver.get(wapp)
+    time.sleep(15)
+    while True:
+        inp = queue.get()
+        save = cv2.VideoWriter("../app_uploaded_files/output.mp4", -1, 20, (512,512))
+        for fr in inp:
+            save.write(cv2.resize(fr,(512,512)))
+        save.release()
+        send_vid(driver, "+919740718396","D:/Github Repos/AI-Surveillance-system/app_uploaded_files/output.mp4")
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+
+    queue = Queue()
+    msg_p = Process(target = send_msgs, args=(queue,))
+    msg_p.start()
+    time.sleep(15)
+    app.run_server(debug=False)
+    msg_p.join()
     
