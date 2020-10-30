@@ -232,17 +232,19 @@ def display_page(pathname):
         return [body]
 
 def send_msgs(queue):
+    i = 0
     driver = webdriver.Chrome(executable_path='../scripts/chromedriver.exe')
     wapp = 'https://web.whatsapp.com/send?phone='+'+919591260537'
     driver.get(wapp)
     time.sleep(15)
     while True:
         inp = queue.get()
-        save = cv2.VideoWriter("../app_uploaded_files/output.mp4", -1, 20, (512,512))
+        save = cv2.VideoWriter(f"../app_uploaded_files/output{i}.mp4", -1, 20, (512,512))
         for fr in inp:
             save.write(cv2.resize(fr,(512,512)))
         save.release()
-        send_vid(driver, "+919731340599",os.path.abspath('../app_uploaded_files/output.mp4'))
+        send_vid(driver, "+919731340599",os.path.abspath(f'../app_uploaded_files/output{i}.mp4'))
+        i+=1
 
 if __name__ == '__main__':
 
