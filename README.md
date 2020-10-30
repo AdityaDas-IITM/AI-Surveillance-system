@@ -10,7 +10,7 @@ For this project we have implemented the following CVPR 2018 research paper:
 We have built a Deep Learning based 3D convolutional network which takes in a video feed and gives out a score corresponding to whether or not there is an occurence of an anomaly (Theft or Assault). 
 In order to make this functional and interactive, we have deployed the trained model on a Dash interface. There are three main functionalities attached to this app 
 
-### Receiving a Whatsapp number from the user to send the Alert and proof video to
+### Sends an Alert and Proof Video to the Whatsapp number given by the user on the Home Page
 ![img](assets/Home.jpeg)
 ### Starting the live feed through a webcam
 ![img](assets/Live-Feed.jpeg)
