@@ -12,7 +12,6 @@ from flask import Flask, send_from_directory,Response
 import cv2
 #import dash_auth
 import plotly
-from PIL import  Image
 import numpy as np
 from multiprocessing import Process, Queue
 from model import C3D, fc
