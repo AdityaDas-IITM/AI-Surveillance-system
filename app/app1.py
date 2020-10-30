@@ -179,8 +179,8 @@ def gen(camera):
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
     c3d_model = C3D().to(device)
     model = fc().to(device)
-    c3d_model.load_state_dict(torch.load("../models/c3d weights.pickle"))
-    model.load_state_dict(torch.load('../models/model.pth'))
+    c3d_model.load_state_dict(torch.load("./models/c3d weights.pickle"))
+    model.load_state_dict(torch.load('./models/model.pth'))
     c3d_model.eval()
     model.eval()
     while True:
@@ -233,7 +233,7 @@ def display_page(pathname):
         return [body]
 
 def send_msgs(queue):
-    driver = webdriver.Chrome(executable_path='../scripts/chromedriver.exe')
+    driver = webdriver.Chrome(executable_path='./scripts/chromedriver.exe')
     wapp = "https://web.whatsapp.com"
     driver.get(wapp)
     time.sleep(15)
@@ -243,7 +243,7 @@ def send_msgs(queue):
         for fr in inp:
             save.write(cv2.resize(fr,(512,512)))
         save.release()
-        send_vid(driver, "+919740718396","D:/Github Repos/AI-Surveillance-system/app_uploaded_files/output.mp4")
+        send_vid(driver, "+919731340599",os.getcwd().replace(os.sep, '/')+"/app_uploaded_files/output.mp4")
 
 if __name__ == '__main__':
 
@@ -253,4 +253,3 @@ if __name__ == '__main__':
     time.sleep(15)
     app.run_server(debug=False)
     msg_p.join()
-    
