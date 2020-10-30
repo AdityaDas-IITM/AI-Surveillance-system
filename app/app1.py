@@ -12,7 +12,6 @@ from flask import Flask, send_from_directory,Response
 import cv2
 #import dash_auth
 import plotly
-from PIL import  Image
 import numpy as np
 from multiprocessing import Process, Queue
 from model import C3D, fc
@@ -243,7 +242,7 @@ def send_msgs(queue):
         for fr in inp:
             save.write(cv2.resize(fr,(512,512)))
         save.release()
-        send_vid(driver, "+919731340599",os.getcwd().replace(os.sep, '/')+"/app_uploaded_files/output.mp4")
+        send_vid(driver, "+918105632052",os.getcwd().replace(os.sep, '/')+"/app_uploaded_files/output.mp4")
 
 if __name__ == '__main__':
 

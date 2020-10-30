@@ -30,4 +30,4 @@ if __name__ == '__main__':
     driver.get(wapp)
     time.sleep(15)
     path = os.getcwd().replace(os.sep, '/') + "/app_uploaded_files/output.mp4"
-    send_vid(driver, "+919740718396", path)
+    send_vid(driver, "+918105632052", path)
