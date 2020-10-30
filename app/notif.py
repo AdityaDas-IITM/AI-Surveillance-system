@@ -3,7 +3,7 @@ import time
 import os
 from selenium.webdriver.common.keys import Keys
 
-def send_vid(driver, phone, path): 
+def send_vid(driver, path): 
     
     # type and send the msg
     inp_xpath = '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]'
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     driver.get(wapp)
     time.sleep(15)
     path = os.getcwd().replace(os.sep, '/') + "/app_uploaded_files/output.mp4"
-    send_vid(driver, "+919740718396", path)
+    send_vid(driver, path)
     '''
     url = 'https://web.whatsapp.com/send?phone='+'+919591260537'
     driver = webdriver.Chrome(executable_path='../scripts/chromedriver.exe')

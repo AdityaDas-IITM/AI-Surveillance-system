@@ -243,7 +243,7 @@ def send_msgs(queue):
         for fr in inp:
             save.write(cv2.resize(fr,(512,512)))
         save.release()
-        send_vid(driver, "+919731340599",os.path.abspath(f'../app_uploaded_files/output{i}.mp4'))
+        send_vid(driver, os.path.abspath(f'../app_uploaded_files/output{i}.mp4'))
         i+=1
 
 if __name__ == '__main__':
