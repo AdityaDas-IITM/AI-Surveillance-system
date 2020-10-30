@@ -11,9 +11,14 @@ We have built a Deep Learning based 3D convolutional network which takes in a vi
 In order to make this functional and interactive, we have deployed the trained model on a Dash interface. There are three main functionalities attached to this app 
 
 ### Receiving a Whatsapp number from the user to send the Alert and proof video to
+![img](assets/Home.jpeg)
 ### Starting the live feed through a webcam
+![img](assets/Live-Feed.jpeg)
 ### Viewing all the clips that the model tagged as an anomaly in the most recent run
+![img](assets/History.jpeg)
 
+
+## Modules
 The scripts used for training are given here: [Scripts](scripts/)
 
 The trained models and weights can be found here: [Models](models/)
