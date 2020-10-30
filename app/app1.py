@@ -19,7 +19,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from notif import send_vid
-
+import glob
 from selenium import webdriver
 import time
 
@@ -27,14 +27,15 @@ server = Flask(__name__)
 app=dash.Dash(__name__,external_stylesheets = [dbc.themes.UNITED], suppress_callback_exceptions=True, server=server)
 
 UPLOAD_DIRECTORY = "../app_uploaded_files"
+cam = None
+list_of_videos = [os.path.basename(x) for x in glob.glob('{}*.mp4'.format(UPLOAD_DIRECTORY+'/'))]
+static_video_route = '/static/'
 
 if not os.path.exists(UPLOAD_DIRECTORY):
     os.makedirs(UPLOAD_DIRECTORY)
 
 navbar = dbc.NavbarSimple(
            children=[
-            
-              dbc.NavItem(dbc.NavLink("Options",href="options")),
               dbc.DropdownMenu(
                  nav=True,
                  in_navbar=True,
@@ -58,83 +59,27 @@ output = html.Div(id = 'output')
 
 layout_page_1 = html.Div([html.Br(),output,
     html.H2('Start Feed'),
-    html.H3("File Browser"),
-    html.H4("Upload"),
-        
-    html.Div([dcc.Upload(
-        id="upload-data",
-        children=html.Div(
-            ["Drag and drop or click to select a file to upload."]
-        ),
-        style={
-            "width": "100%",
-            "height": "300px",
-            "lineHeight": "60px",
-            "borderWidth": "1px",
-            "borderStyle": "dashed",
-            "borderRadius": "5px",
-            "textAlign": "center",
-            "margin": "10px",
-        },
-        multiple=False,
-        )]),
     html.H1("Live Feed"),
     html.Img(src="/video_feed"),
         #html.H2("File List"),
         #html.Ul(id="file-list"),
         ],
-    style={"max-width": "500px"},
+    style={'margin-left':'25%'},
 )
 
 
 layout_page_2 = html.Div([
     html.H2('Recent feed'),
     html.H3("File List"),
-    html.Ul(id="file-list"),])
-
-
-
-@app.callback(Output("output", "children"), Input("input", "value"))
-def num(a):
-    print("called")
-    if a is not None:
-        print(a)
-        return [html.P(str(a))]
-    else:
-        return [html.P("Enter a valid number")]
-
-def save_file(name, content):
-    data = content.encode("utf8").split(b";base64,")[1]
-    with open(os.path.join(UPLOAD_DIRECTORY, name), "wb") as fp:
-        fp.write(base64.decodebytes(data))
-
-
-def uploaded_files():
-    """List the files in the upload directory."""
-    files = []
-    for filename in os.listdir(UPLOAD_DIRECTORY):
-        path = os.path.join(UPLOAD_DIRECTORY, filename)
-        if os.path.isfile(path):
-            files.append(filename)
-    return files
-
-
-def file_download_link(filename):
-    location = "/download/{}".format(urlquote(filename))
-    return html.A(filename, href=location)
-
-@app.callback(Output("file-list", "children"), [Input("upload-data", "contents"), Input("upload-data", "filename")])
-def update_output(uploaded_file_contents, uploaded_filenames):
-    #if (uploaded_filenames is not None) and (uploaded_file_contents is not None):
-    print("called")
-    for name, data in zip(uploaded_filenames, uploaded_file_contents):
-        save_file(name, data)
-
-    files = uploaded_files()
-    if len(files) == 0:
-        return [html.Li("No files yet!")]
-    else:
-        return [html.Li(file_download_link(filename)) for filename in files]
+    html.Ul(id="file-list"),
+    html.Div([dcc.Dropdown(
+        id='video-dropdown',
+        options=[{'label': i, 'value': i} for i in list_of_videos],
+        value=list_of_videos[0]
+    )], style = {'width': '35%'}),
+    html.Br(),
+    html.Video(id='video', autoPlay=True, loop=True)],
+    style={'margin-left':'25%'})
 
 body = dbc.Container(
     [
@@ -142,23 +87,47 @@ body = dbc.Container(
            [
                dbc.Col(
                   [
-                     html.H2("SecurAI"),
+                     html.H2("SecurAI"),html.Br(),
                      html.P(
                          """Do not let another crime go unnoticed"""
-                           ),
-                           dbc.Button("View details", color="secondary"),
+                           ),html.Br(),html.Br(),html.H1("Every Year 60% of Thefts go unreported or unsolved."),
+                           html.H3("\nYou can ensure this not happening again with us"),
+                           
                    ],
                 
                ),
               
                      
-                ]
+                ],style={'margin-left':'18%'},
             ),
+        dbc.Row(
+           [
+               dbc.Col(
+                  [html.Br(),dcc.Input(id="number", type="number", placeholder="Enter your Phone Number", min = 6000000000, max = 9999999999),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),html.Br(),
+                     html.H4("Aditya Das, Aryan Pandey, Joy Jefferson, Nihal John George"),
+                     
+                     
+                           
+                   ],
+                
+               ),
+              
+                     
+                ],style={'margin-left':'15%'},
+            ),
+        
        ],
 className="mt-4"
 )
 
-
+@app.callback(Output("number", 'disabled'), Input("number", 'value'))
+def phonenum(num):
+    global queue2
+    if num is not None:
+        queue2.put(str(num))
+        return True
+    else:
+        return False
 class VideoCamera(object):
     def __init__(self):
         self.video = cv2.VideoCapture(0)
@@ -173,13 +142,13 @@ class VideoCamera(object):
 
 
 def gen(camera):
-    global queue
+    global queue1
     inp = []
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
     c3d_model = C3D().to(device)
     model = fc().to(device)
     c3d_model.load_state_dict(torch.load("../models/c3d weights.pickle"))
-    model.load_state_dict(torch.load('../models/model.pth'))
+    model.load_state_dict(torch.load("../models/model.pth"))
     c3d_model.eval()
     model.eval()
     while True:
@@ -195,7 +164,7 @@ def gen(camera):
             value = model(pred).detach().cpu().numpy()[0][0]
             print(value)
             if value > 0.15:
-                queue.put(inp)
+                queue1.put(inp)
                 #send_vid("+919740718396","../app_uploaded_files/output.mp4")
             inp = []
             
@@ -206,13 +175,27 @@ def gen(camera):
 
 @server.route('/video_feed')
 def video_feed():
-    img = Response(gen(VideoCamera()),
+    global cam
+    img = Response(gen(cam),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
     
     return img
 
+@app.callback(
+    dash.dependencies.Output('video', 'src'),
+    [dash.dependencies.Input('video-dropdown', 'value')])
+def update_image_src(value):
+    return static_video_route + value
 
-
+# Add a static image route that serves images from desktop
+# Be *very* careful here - you don't want to serve arbitrary files
+# from your computer or server
+@app.server.route('{}<video_path>.mp4'.format(static_video_route))
+def serve_video(video_path):
+    video_name = '{}.mp4'.format(video_path)
+    if video_name not in list_of_videos:
+        raise Exception('"{}" is excluded from the allowed static files'.format(video_path))
+    return send_from_directory(UPLOAD_DIRECTORY+'/', video_name)
 
 page = html.Div(id = 'page-content')
 url_bar = dcc.Location(id = 'url', refresh = False)
@@ -224,21 +207,35 @@ app.layout=html.Div([url_bar,navbar,page])
               [Input('url', 'pathname')])
 def display_page(pathname):
     #print(pathname)
+    global cam
     if pathname == "/start-feed":
+        cam = VideoCamera()
         return [layout_page_1]
     elif pathname == "/recent-feed":
+        try:
+            cam.__del__()
+        except:
+            pass
         return [layout_page_2]
     else:
+        try:
+            cam.__del__()
+        except:
+            pass
         return [body]
+    
+        
 
-def send_msgs(queue):
-    i = 0
+
+def send_msgs(queue1, queue2):
+    phone_num = queue2.get()
+    i=0
     driver = webdriver.Chrome(executable_path='../scripts/chromedriver.exe')
-    wapp = 'https://web.whatsapp.com/send?phone='+'+919591260537'
+    wapp = 'https://web.whatsapp.com/send?phone='+'+91'+phone_num
     driver.get(wapp)
     time.sleep(15)
     while True:
-        inp = queue.get()
+        inp = queue1.get()
         save = cv2.VideoWriter(f"../app_uploaded_files/output{i}.mp4", -1, 20, (512,512))
         for fr in inp:
             save.write(cv2.resize(fr,(512,512)))
@@ -248,9 +245,11 @@ def send_msgs(queue):
 
 if __name__ == '__main__':
 
-    queue = Queue()
-    msg_p = Process(target = send_msgs, args=(queue,))
+    queue1 = Queue()
+    queue2 = Queue()
+    msg_p = Process(target = send_msgs, args=(queue1,queue2))
     msg_p.start()
-    time.sleep(15)
+    #time.sleep(15)
     app.run_server(debug=False)
     msg_p.join()
+    
