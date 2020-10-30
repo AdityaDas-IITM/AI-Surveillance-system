@@ -16,7 +16,8 @@ In order to make this functional and interactive, we have deployed the trained m
 ![img](assets/Live-Feed.jpeg)
 ### Viewing all the clips that the model tagged as an anomaly in the most recent run
 ![img](assets/History.jpeg)
-
+### Some sent messages
+![img](assets/messages.jpg)
 
 ## Modules
 The scripts used for training are given here: [Scripts](scripts/)
