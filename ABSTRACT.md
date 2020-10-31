@@ -27,3 +27,4 @@ The trained models and weights can be found here: [Models](models/)
 The scripts to design the app on Dash can be found here: [App Scripts](app/)
 
 Videos which were marked as an anomaly by the model can be found here: [Anomalous videos](app_uploaded_files/)
+**To run the webapp, run app1.py script.**
