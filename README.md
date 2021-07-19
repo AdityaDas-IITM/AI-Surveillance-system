@@ -1,4 +1,8 @@
 # SecurAI
+Contributors : Aditya Das, Aryan Pandey, Joy Jefferson and Nihal John George
+
+---------------------------------
+
 With the pandemic, managing security of facilities has become cumbersome. Monitoring thousands of cameras with hours of camera feed requires an unsustainable workforce which can send the operating costs of a company through the roof. 
 
 Our solution uses AI to detect anomalies in video feed to flag potential physical criminal activity. We implement a 2018 CVPR paper on crime detection, with a model trained from scratch using the appropriate crime categories, like ‘burglary’ and ‘fighting’. 
@@ -28,7 +32,4 @@ The trained models and weights can be found here: [Models](models/)
 The scripts to design the app on Dash can be found here: [App Scripts](app/)
 
 Videos which were marked as an anomaly by the model can be found here: [Anomalous videos](app_uploaded_files/)
-
----------------------------------
-Contributors : Aditya Das, Aryan Pandey, Joy Jefferson and Nihal John George
 
